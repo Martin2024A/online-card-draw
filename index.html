@@ -2,13 +2,24 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <title>三盒在线抽卡 - 二次元升级版</title>
+  <title>三盒在线抽卡</title> <!-- 去掉「二次元升级版」 -->
 
   <!-- 引入 Font Awesome (图标) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
   
   <!-- 引入 jQuery (如需后续功能扩展) -->
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+
+  <script>
+    window.live2d_settings = {
+      tool: {
+        about: false,
+        share: false,
+        screenshot: false,
+        paint: false
+      }
+    }
+  </script>
   
   <!-- 看板娘 live2d-widget，自动加载并在右下角显示动漫角色 -->
   <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
@@ -203,10 +214,18 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* ============== 底部信息 ============== */
+    .footer-info {
+      margin-top: 1rem;
+      text-align: center;
+      color: #fff;
+      opacity: 0.7;
+      font-size: 0.85rem;
+    }
   </style>
 </head>
 <body>
-  <h1>三盒在线抽卡 - 二次元升级版</h1>
+  <h1>三盒在线抽卡</h1> <!-- 去掉“二次元升级版” -->
   <h2>行动 · 娱乐 · 决策</h2>
 
   <div class="container">
@@ -267,13 +286,46 @@
     </div>
   </div>
 
+  <!-- 在页面底部添加个人信息 Martin -->
+  <div class="footer-info">
+    <p>Created by Martin</p>
+  </div>
+
 <script>
 /****************************************************************
  * 1. 预置默认卡片数据 (从你提供的简洁版三盒卡片)
  ****************************************************************/
 const defaultCards = [
-  /* 请直接把你原先的 defaultCards 数组放在此处 */
+  // 行动卡片
+  { box: 'action', title: '完成今日待办清单', recommendedTime: '每日必做', weight: 1.5, detail: '整理今日的任务并完成关键待办事项。' },
+  { box: 'action', title: '进行30分钟运动', recommendedTime: '每日必做', weight: 1, detail: '选择喜欢的运动方式：如跑步、瑜伽或力量训练。' },
+  { box: 'action', title: '处理邮件和文档', recommendedTime: '上午', weight: 1.2, detail: '集中精力回复邮件并完成重要文档。' },
+  { box: 'action', title: '整理工作区', recommendedTime: '每周', weight: 1, detail: '清理办公桌、文件夹和数字设备。' },
+  { box: 'action', title: '规划一周任务', recommendedTime: '周日', weight: 1.2, detail: '设定目标并调整计划。' },
+  { box: 'action', title: '学习时间管理', recommendedTime: '长期', weight: 0.8, detail: '阅读相关书籍或参加课程提升效率。' },
+  { box: 'action', title: '改善饮食习惯', recommendedTime: '每日', weight: 0.9, detail: '尝试健康食谱并规律用餐。' },
+  { box: 'action', title: '和家人视频聊天', recommendedTime: '每周', weight: 0.8, detail: '抽空关心家人，建立情感连接。' },
+  { box: 'action', title: '完成一章写作', recommendedTime: '下午', weight: 1.3, detail: '设定字数目标并完成小说章节。' },
+  { box: 'action', title: '参与团队会议', recommendedTime: '周一', weight: 1, detail: '记录关键点并分配任务。' },
+  { box: 'action', title: '撰写项目总结', recommendedTime: '月底', weight: 1.2, detail: '收集成果并汇总为清晰的报告。' },
+  { box: 'action', title: '完成税务或账单', recommendedTime: '月初', weight: 1, detail: '确认账单并按时缴纳费用。' },
+  { box: 'action', title: '更新简历和求职信', recommendedTime: '季度', weight: 1, detail: '确保最新内容以备机会来临。' },
+  { box: 'action', title: '参加线上学习活动', recommendedTime: '每周', weight: 1.1, detail: '探索感兴趣的话题并记下笔记。' },
+  { box: 'action', title: '制定个人目标', recommendedTime: '年度', weight: 1, detail: '明确未来计划并逐步实现。' },
+
+  // 娱乐卡片
+  { box: 'fun', title: '追一集电视剧', recommendedTime: '晚上', weight: 1.5, detail: '选择喜欢的剧集，放松心情。' },
+  { box: 'fun', title: '刷15分钟小红书', recommendedTime: '休息时', weight: 1.2, detail: '探索新内容，寻找灵感。' },
+  { box: 'fun', title: '试一款新游戏', recommendedTime: '周末', weight: 1, detail: '享受游戏带来的趣味和挑战。' },
+  { box: 'fun', title: '制作创意手工', recommendedTime: '周末', weight: 1, detail: '发挥创意，享受动手乐趣。' },
+  { box: 'fun', title: '与朋友聊天', recommendedTime: '每周', weight: 1.1, detail: '分享近况，增进友谊。' },
+  // 决策卡片
+  { box: 'decision', title: '是否参加下周培训？', recommendedTime: '重要决策', weight: 1, detail: '分析培训收益，平衡时间成本。' },
+  { box: 'decision', title: '是否调整工作重心？', recommendedTime: '中期目标', weight: 1.1, detail: '根据当前任务量和长期目标权衡决定。' },
+  { box: 'decision', title: '选择哪个副业领域？', recommendedTime: '年度', weight: 1.3, detail: '评估兴趣和市场前景后作出决定。' },
+  { box: 'decision', title: '是否开始新习惯？', recommendedTime: '短期', weight: 1, detail: '判断新习惯是否能有效改善生活质量。' },
 ];
+
 
 /****************************************************************
  * 2. 从 localStorage 读取或初始化
