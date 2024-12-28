@@ -1,18 +1,231 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="三盒在线抽卡：行动、娱乐、决策">
-  <meta name="keywords" content="抽卡,在线抽卡,三盒,决策,管理">
-  <title>三盒在线抽卡</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+  <meta charset="utf-8" />
+  <title>三盒在线抽卡</title> <!-- 去掉「二次元升级版」 -->
+
+  <!-- 引入 Font Awesome (图标) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
+  
+  <!-- 引入 jQuery (如需后续功能扩展) -->
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+
+  <script>
+    window.live2d_settings = {
+      tool: {
+        about: false,
+        share: false,
+        screenshot: false,
+        paint: false
+      }
+    }
+  </script>
+  
+  <!-- 看板娘 live2d-widget，自动加载并在右下角显示动漫角色 -->
   <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+  
+  <style>
+    /* ============== 全局基础样式 ============== */
+    * {
+      box-sizing: border-box;
+      margin: 0; 
+      padding: 0;
+    }
+    body {
+      font-family: "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(160deg, #fbc2eb 0%, #a6c1ee 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 2rem; 
+      margin-top: 1rem;
+    }
+    h2 {
+      font-size: 1.2rem; 
+      color: #f0f0f0;
+    }
+
+    /* ============== 容器与布局 ============== */
+    .container {
+      width: 95%;
+      max-width: 1000px;
+      background-color: rgba(255,255,255,0.85);
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      margin-bottom: 2rem;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      outline: none;
+      font-weight: 600;
+    }
+    button:hover {
+      filter: brightness(0.9);
+    }
+    .btn-action { background-color: #6ec6ff; color: #fff; }
+    .btn-fun { background-color: #ffb6c1; color: #fff; }
+    .btn-decision { background-color: #c7a4ff; color: #fff; }
+    .btn-manage { background-color: #ffa726; color: #fff; }
+
+    /* ============== 卡片显示区域 ============== */
+    .card-display {
+      margin-top: 1rem;
+      min-height: 220px;
+      padding: 1rem;
+      background-color: #fdfdfd;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      position: relative;
+      animation: fadeIn 0.5s ease forwards;
+    }
+    .card-display .icon-area {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 2rem;
+      color: #ffb74d;
+      opacity: 0.2;
+    }
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+      color: #444;
+      text-align: center;
+    }
+    .card-subtitle {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .card-detail {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+      margin: 0 auto;
+      text-align: left;
+      max-width: 90%;
+      background: #ffffff;
+      border-left: 4px solid #c5e1a5;
+      padding: 0.8rem;
+      border-radius: 6px;
+    }
+    .card-detail ul {
+      list-style: none;
+      margin-left: 0;
+      padding-left: 0;
+    }
+    .card-detail ul li::before {
+      content: "★ ";
+      color: #ffb74d;
+      margin-right: 4px;
+    }
+
+    /* ============== 管理面板(添加/编辑) ============== */
+    .manage-panel {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background-color: #fffefa;
+      border-radius: 8px;
+      border: 2px solid #eee;
+      display: none;
+    }
+    .manage-panel h3 {
+      margin-bottom: 1rem;
+      color: #333;
+      font-size: 1.1rem;
+    }
+    .form-group {
+      margin-bottom: 0.8rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-size: 0.9rem;
+      margin-bottom: 0.2rem;
+      color: #444;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 0.4rem;
+      font-size: 0.9rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+      outline: none;
+    }
+    .card-list {
+      margin-top: 1rem;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 0.5rem;
+      background-color: #fff;
+    }
+    .card-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+      background-color: #f9f9f9;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+    }
+    .card-list-item button {
+      background-color: #ef5350; 
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    /* ============== 动画过渡 ============== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============== 底部信息 ============== */
+    .footer-info {
+      margin-top: 1rem;
+      text-align: center;
+      color: #fff;
+      opacity: 0.7;
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>三盒在线抽卡</h1>
+  <h1>三盒在线抽卡</h1> <!-- 去掉“二次元升级版” -->
   <h2>行动 · 娱乐 · 决策</h2>
 
   <div class="container">
@@ -32,6 +245,7 @@
       </div>
     </div>
 
+    <!-- 管理面板：添加/删除/查看卡片 -->
     <div class="manage-panel" id="managePanel">
       <h3><i class="fa fa-pencil"></i> 添加/删除卡片</h3>
       <div class="form-group">
@@ -47,29 +261,240 @@
         <input type="text" id="cardTitleInput" placeholder="如：工作：整理文档 30 分钟">
       </div>
       <div class="form-group">
-        <label>推荐时间：</label>
-        <input type="text" id="recommendedTimeInput" placeholder="如：前2个月 / 长期">
+        <label>推荐时间（权重备注）：</label>
+        <input type="text" id="recommendedTimeInput" placeholder="如：前2个月 / 长期 / 第3~6个月">
       </div>
       <div class="form-group">
-        <label>抽卡权重：</label>
-        <input type="number" step="0.1" id="weightInput" value="1">
+        <label>抽卡权重（数值越大越容易被抽到）：</label>
+        <input type="number" step="0.1" id="weightInput" value="1" placeholder="默认1">
       </div>
       <div class="form-group">
         <label>卡片详细内容：</label>
         <textarea id="cardDetailInput" rows="3" placeholder="简要描述行动/步骤/时长等"></textarea>
       </div>
-      <div class="form-actions">
-        <button id="addCardBtn" class="btn-add">添加卡片</button>
-        <button id="closeManageBtn" class="btn-close">关闭面板</button>
+      <div class="form-group" style="display:flex; gap:1rem;">
+        <button id="addCardBtn" style="flex:1; background-color:#66bb6a; color:#fff; border:none; border-radius:4px; padding:0.5rem;">
+          <i class="fa fa-plus"></i> 添加卡片
+        </button>
+        <button id="closeManageBtn" style="flex:1; background-color:#bdbdbd; color:#fff; border:none; border-radius:4px; padding:0.5rem;">
+          <i class="fa fa-times"></i> 关闭面板
+        </button>
       </div>
+
+      <!-- 已有卡片列表 -->
       <div class="card-list" id="cardList"></div>
     </div>
   </div>
 
-  <footer>
-    <div class="footer-info">Created by Martin</div>
-  </footer>
-  
-  <script src="script.js"></script>
+  <!-- 在页面底部添加个人信息 Martin -->
+  <div class="footer-info">
+    <p>Created by Martin</p>
+  </div>
+
+<script>
+/****************************************************************
+ * 1. 预置默认卡片数据 (从你提供的简洁版三盒卡片)
+ ****************************************************************/
+const defaultCards = [
+  /* 将你原先的大段 defaultCards 数组粘贴在此处即可 */
+];
+
+/****************************************************************
+ * 2. 从 localStorage 读取或初始化
+ ****************************************************************/
+let allCards = JSON.parse(localStorage.getItem("myCards")) || [];
+
+if (allCards.length === 0) {
+  // 如果当前 localStorage 没有卡片数据，则加载默认卡片
+  allCards = defaultCards.slice(); 
+  saveCards();
+}
+
+/****************************************************************
+ * 3. 获取DOM元素
+ ****************************************************************/
+const drawActionBtn = document.getElementById("drawAction");
+const drawFunBtn = document.getElementById("drawFun");
+const drawDecisionBtn = document.getElementById("drawDecision");
+const cardDisplay = document.getElementById("cardDisplay");
+const cardTitleEl = document.getElementById("cardTitle");
+const cardTimeEl = document.getElementById("cardTime");
+const cardDetailEl = document.getElementById("cardDetail");
+const cardBoxIcon = document.getElementById("cardBoxIcon");
+
+const manageBtn = document.getElementById("manageBtn");
+const managePanel = document.getElementById("managePanel");
+const boxTypeSelect = document.getElementById("boxTypeSelect");
+const cardTitleInput = document.getElementById("cardTitleInput");
+const recommendedTimeInput = document.getElementById("recommendedTimeInput");
+const weightInput = document.getElementById("weightInput");
+const cardDetailInput = document.getElementById("cardDetailInput");
+const addCardBtn = document.getElementById("addCardBtn");
+const closeManageBtn = document.getElementById("closeManageBtn");
+const cardList = document.getElementById("cardList");
+
+/****************************************************************
+ * 4. 抽卡逻辑：根据 boxType + weight 加权随机
+ ****************************************************************/
+function drawCard(boxType) {
+  const boxCards = allCards.filter(c => c.box === boxType);
+  if (boxCards.length === 0) {
+    return null;
+  }
+  let totalWeight = 0;
+  boxCards.forEach(c => { totalWeight += (c.weight || 1); });
+  let randomNum = Math.random() * totalWeight;
+  let cumulative = 0;
+  for (let c of boxCards) {
+    cumulative += (c.weight || 1);
+    if (randomNum < cumulative) {
+      return c;
+    }
+  }
+  return boxCards[boxCards.length - 1];
+}
+
+/****************************************************************
+ * 5. 显示抽到的卡片, 同时根据盒子类型切换不同图标
+ ****************************************************************/
+function displayCard(card) {
+  if (!card) {
+    cardTitleEl.textContent = "暂无卡片或无法抽取";
+    cardTimeEl.textContent = "";
+    cardDetailEl.textContent = "请先在 [管理卡片] 中添加卡片信息~";
+    cardBoxIcon.innerHTML = `<i class="fa fa-question"></i>`;
+    return;
+  }
+  // 标题 & 推荐时间
+  cardTitleEl.textContent = card.title;
+  if (card.recommendedTime) {
+    cardTimeEl.textContent = `推荐时间：${card.recommendedTime} (权重: ${card.weight})`;
+  } else {
+    cardTimeEl.textContent = `权重: ${card.weight}`;
+  }
+  // detail 多行渲染
+  let lines = card.detail.split("\n").map(l => l.trim()).filter(l => l);
+  let detailHtml = "<ul>" + lines.map(l => `<li>${l}</li>`).join("") + "</ul>";
+  cardDetailEl.innerHTML = detailHtml;
+
+  // 根据卡片box类型，显示不同图标
+  if (card.box === 'action') {
+    cardBoxIcon.innerHTML = `<i class="fa fa-fire"></i>`;
+    cardBoxIcon.style.color = "#ffa726";
+  } else if (card.box === 'fun') {
+    cardBoxIcon.innerHTML = `<i class="fa fa-smile-o"></i>`;
+    cardBoxIcon.style.color = "#ffb6c1";
+  } else if (card.box === 'decision') {
+    cardBoxIcon.innerHTML = `<i class="fa fa-lightbulb-o"></i>`;
+    cardBoxIcon.style.color = "#c7a4ff";
+  }
+}
+
+/****************************************************************
+ * 6. 渲染“管理面板”中的卡片列表
+ ****************************************************************/
+function renderCardList() {
+  cardList.innerHTML = "";
+  allCards.forEach((c, idx) => {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "card-list-item";
+    itemDiv.innerHTML = `
+      <div>
+        [${c.box}] ${c.title} | time:${c.recommendedTime} | w:${c.weight}
+      </div>
+    `;
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "删除";
+    delBtn.onclick = () => {
+      allCards.splice(idx, 1);
+      saveCards();
+      renderCardList();
+    };
+    itemDiv.appendChild(delBtn);
+    cardList.appendChild(itemDiv);
+  });
+}
+
+/****************************************************************
+ * 7. 保存到 localStorage
+ ****************************************************************/
+function saveCards() {
+  localStorage.setItem("myCards", JSON.stringify(allCards));
+}
+
+/****************************************************************
+ * 8. 事件绑定 
+ ****************************************************************/
+drawActionBtn.addEventListener("click", () => {
+  let c = drawCard("action");
+  displayCard(c);
+});
+
+drawFunBtn.addEventListener("click", () => {
+  let c = drawCard("fun");
+  displayCard(c);
+});
+
+drawDecisionBtn.addEventListener("click", () => {
+  let c = drawCard("decision");
+  displayCard(c);
+});
+
+manageBtn.addEventListener("click", () => {
+  const isHidden = (managePanel.style.display === "" || managePanel.style.display === "none");
+  managePanel.style.display = isHidden ? "block" : "none";
+  if (isHidden) renderCardList();
+});
+
+closeManageBtn.addEventListener("click", () => {
+  managePanel.style.display = "none";
+});
+
+addCardBtn.addEventListener("click", () => {
+  const boxType = boxTypeSelect.value;
+  const titleVal = cardTitleInput.value.trim();
+  const timeVal = recommendedTimeInput.value.trim();
+  const wVal = parseFloat(weightInput.value) || 1;
+  const detailVal = cardDetailInput.value.trim();
+  if (!titleVal) {
+    alert("卡片标题不可为空！");
+    return;
+  }
+  const newCard = {
+    box: boxType,
+    title: titleVal,
+    recommendedTime: timeVal,
+    weight: wVal,
+    detail: detailVal
+  };
+  allCards.push(newCard);
+  saveCards();
+  renderCardList();
+  // 清理输入
+  cardTitleInput.value = "";
+  recommendedTimeInput.value = "";
+  weightInput.value = "1";
+  cardDetailInput.value = "";
+});
+
+/****************************************************************
+ * 9. 页面初始化
+ ****************************************************************/
+function init() {
+  displayCard(null);
+  renderCardList();
+}
+
+/** 若想重置为默认卡片，可以手动在控制台输入 resetData() **/
+function resetData() {
+  localStorage.removeItem("myCards");
+  allCards = defaultCards.slice();
+  saveCards();
+  renderCardList();
+  displayCard(null);
+}
+
+init();
+</script>
 </body>
 </html>
