@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="三盒在线抽卡：行动、娱乐、决策">
+  <meta name="keywords" content="抽卡,在线抽卡,三盒,决策,管理">
+  <title>三盒在线抽卡</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+</head>
+<body>
+  <h1>三盒在线抽卡</h1>
+  <h2>行动 · 娱乐 · 决策</h2>
+
+  <div class="container">
+    <div class="buttons">
+      <button id="drawAction" class="btn-action"><i class="fa fa-fire"></i> 抽「行动卡」</button>
+      <button id="drawFun" class="btn-fun"><i class="fa fa-smile-o"></i> 抽「娱乐卡」</button>
+      <button id="drawDecision" class="btn-decision"><i class="fa fa-lightbulb-o"></i> 抽「决策卡」</button>
+      <button id="manageBtn" class="btn-manage"><i class="fa fa-cogs"></i> 管理卡片</button>
+    </div>
+
+    <div class="card-display" id="cardDisplay">
+      <div class="icon-area" id="cardBoxIcon"><i class="fa fa-star"></i></div>
+      <div class="card-title" id="cardTitle">点击上方按钮抽卡</div>
+      <div class="card-subtitle" id="cardTime"></div>
+      <div class="card-detail" id="cardDetail">
+        在这里显示卡片内容
+      </div>
+    </div>
+
+    <div class="manage-panel" id="managePanel">
+      <h3><i class="fa fa-pencil"></i> 添加/删除卡片</h3>
+      <div class="form-group">
+        <label>盒子种类：</label>
+        <select id="boxTypeSelect">
+          <option value="action">行动卡</option>
+          <option value="fun">娱乐卡</option>
+          <option value="decision">决策卡</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>卡片标题：</label>
+        <input type="text" id="cardTitleInput" placeholder="如：工作：整理文档 30 分钟">
+      </div>
+      <div class="form-group">
+        <label>推荐时间：</label>
+        <input type="text" id="recommendedTimeInput" placeholder="如：前2个月 / 长期">
+      </div>
+      <div class="form-group">
+        <label>抽卡权重：</label>
+        <input type="number" step="0.1" id="weightInput" value="1">
+      </div>
+      <div class="form-group">
+        <label>卡片详细内容：</label>
+        <textarea id="cardDetailInput" rows="3" placeholder="简要描述行动/步骤/时长等"></textarea>
+      </div>
+      <div class="form-actions">
+        <button id="addCardBtn" class="btn-add">添加卡片</button>
+        <button id="closeManageBtn" class="btn-close">关闭面板</button>
+      </div>
+      <div class="card-list" id="cardList"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-info">Created by Martin</div>
+  </footer>
+  
+  <script src="script.js"></script>
+</body>
+</html>
